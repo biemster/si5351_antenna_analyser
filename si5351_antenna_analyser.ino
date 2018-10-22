@@ -12,6 +12,8 @@ char receivedChars[numChars] = {0};   // an array to store the received data
 boolean newFreq = false;
 
 void setup() {
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
   Serial.begin(115200);
   
   if(si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0)) {
@@ -61,10 +63,17 @@ void updateFrequency() {
     }
     else {
       unsigned long freq = strtoul(receivedChars, NULL, 10);
-      Serial.print("Setting clk1 to ");
-      Serial.println(freq);
-
       si5351.set_freq(freq, SI5351_CLK1);
+
+      // calculate SWR
+      delay(50);
+      float FWD = (float)analogRead(A0);
+      float REV = (float)analogRead(A1);
+      float SWR = (FWD+REV) / (FWD-REV);
+    
+      Serial.print(freq);
+      Serial.print(":");
+      Serial.println(SWR);
     }
     
     newFreq = false;

@@ -21,3 +21,4 @@ with serial.Serial('/dev/ttyUSB0', 115200, timeout=1) as ser:
         for f in freqs:
             ser.write((str(f) + '\n').encode())
             sleep(0.333)
+            print(ser.readline())
